@@ -32,5 +32,5 @@ If someone is reading this and wants to use it, follow these steps:
     ./reader
 
 Limitations:
-In theory, you could use this program to display any image composed of 1 bit per pixel and with no padding (see this Wikipedia page for more information on the BMP file format).
+In theory, you could use this program to display any image composed of 1 bit per pixel and with no padding (see this Wikipedia page for more information on the BMP file format https://en.wikipedia.org/wiki/BMP_file_format#Pixel_storage).
 I will probably improve it to avoid those limitations.
