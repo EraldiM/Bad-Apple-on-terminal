@@ -15,10 +15,10 @@ typedef struct bmp_bd {
 } bmp_bd;
 
 typedef struct bmp_bfh {
-  unsigned char header[3];    // 2 + 1 byte riservati all'header BM
-  unsigned char size[5];      // 4 + 1 byte riservati alla dimensione del file
-  unsigned char creator[5];   // 4 + 1 byte riservati al creatore del file
-  unsigned char offset_bd[5]; // 4 + 1 byte riservati alla posizione dei pixel
+  unsigned char header[3];  // 2 + 1 byte dedicated for the header
+  unsigned char size[5];    // 4 + 1 byte dedicated for the size of the file
+  unsigned char creator[5]; // 4 + 1 byte dedicated for the creator of the file
+  unsigned char offset_bd[5]; // 4 + 1 byte dedicated for the bitmapdata offset
   int32_t Ioffset_bd;
 } bmp_bfh;
 
