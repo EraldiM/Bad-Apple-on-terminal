@@ -11,7 +11,7 @@ I got the video frames from this repository: https://github.com/Felixoofed/badap
 I searched for a converter and came across this program: https://github.com/Templarian/image-to-bmp.
 Since there are more than 6000 images, I needed to automate the process, so I wrote a Bash script to scan all the files in the folder and convert them to BMP format.
 
-I chose to convert the images using blocks of 12 pixels (width) by 8 pixels (height), since the images are black and white and use only 1 bit per pixel. Each pixel is represented by a single bit.
+I chose to convert the images using blocks of 12 pixels (height) by 8 pixels (width), since the images are black and white and use only 1 bit per pixel. Each pixel is represented by a single bit.
 
 To convert the images to ASCII, I had to consider the proportions of terminal characters. I noticed that each character in the terminal is not a perfect square — the height is about 1.5 times the width. So I chose a reading ratio that reflects this shape.
 
