@@ -1,4 +1,4 @@
-This program plays the video clip Bad Apple (link) and renders it in the terminal using ASCII characters.
+This program plays the video clip Bad Apple (https://www.youtube.com/watch?v=FtutLA63Cp8&pp=ygUJYmFkIGFwcGxl) and renders it in the terminal using ASCII characters.
 
 I’ve always wanted to do this — I like the idea of reproducing it everywhere, and this is my contribution.
 
