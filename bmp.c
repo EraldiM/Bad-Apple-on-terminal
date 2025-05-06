@@ -5,51 +5,52 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-// funzione che riepie la struct che identifica l'header dell'immagine
+// This function fills the filds for the struct that describes the file header
 void fill_bfh(bmp_bfh *immagine, int file) {
-  // lettura e scrittura dei primi 2 byte BM
+  // reading the firsts 2 bytes
   read(file, immagine->header, sizeof(immagine->header) - 1);
 
-  // lettura delle dimensione del file
+  // reading the dimensions
   read(file, immagine->size, sizeof(immagine->size) - 1);
 
-  // lettura dei byte per il creatore dell'immagine
+  // reading the bytes for the creator of the image
   read(file, immagine->creator, sizeof(immagine->creator) - 1);
 
-  // lettura dell'offset per la posizione dei pixel
+  // reading the offset for the pixel's position
   read(file, immagine->offset_bd, sizeof(immagine->offset_bd) - 1);
 }
 
-// funzione che riempie la struct che identifica la DIB
+// This function fills the struct that describes the dib part
 void fill_dib(bmp_dib *immagine, int file) {
-  // lettura e scrittura della dimensione del bitmap header
+  // reading the dib size
   lseek(file, 14, SEEK_SET);
   read(file, immagine->size, sizeof(immagine->size) - 1);
 
-  // larghezza dell'immagine
+  // reading the image width
   read(file, immagine->bm_width, 4);
 
-  // altezza dell'immagine
+  // reading the image height
   read(file, immagine->bm_height, 4);
 
-  // numero del color plane (1)
+  // reading the number of color plane
   read(file, immagine->color, 2);
 
-  // numero di bit per pixel
+  // number of bit per pixel
   read(file, immagine->bitXpixel, 2);
 }
 
-// funzione che converte il numero contenuto nel char che indentifica la
-// posizione all'interno del file del primo pixel
+// converting the size of the pixel offset from char little endian to decimal
 void bmp_CR(bmp_bfh *immagine, int file) {
   immagine->Ioffset_bd = 0;
   for (int i = 0; i < 4; i++) {
-    immagine->Ioffset_bd += (int)immagine->offset_bd[i] << (8 * i);
+    immagine->Ioffset_bd +=
+        (int)immagine->offset_bd[i]
+        << (8 * i); // bit shifting is equivalent to multiply by the power of
+                    // 256, this approach will appear again
   }
 }
 
-// funzione che converte le altezze e le larghezze contenuto nel char letto da
-// read in intero
+// converting the sizes from char little endian to int
 void convertCTI(bmp_dib *immagine) {
   immagine->Ibm_width = 0;
   for (int i = 0; i < 4; i++)
@@ -63,7 +64,7 @@ void convertCTI(bmp_dib *immagine) {
     immagine->Ibm_height += (int)(immagine->bm_height[i] << (8 * i));
 }
 
-// funzione che legge i pixel a blocchi di 12 x 8
+// functon that reads the pixels and creates the 12 x 8 block of pixel
 void draw_image(bmp_bd *immagine, int file) {
   short black;
   int row_size = ((immagine->width + 31) / 32) * 4;
@@ -76,8 +77,7 @@ void draw_image(bmp_bd *immagine, int file) {
         read(file, &pixel[i], 1);
         if (i != 11)
           lseek(file, row_size - 1, SEEK_CUR);
-        // salgo di una riga e torno indietro di un byte, ovvero vado all'inizio
-        // della riga sopra
+        // going one row up to read the pixel above
       }
       black = count_BP(pixel);
       printf("\033[%d;%dH", row, col + 30);
@@ -89,15 +89,16 @@ void draw_image(bmp_bd *immagine, int file) {
         printf(" ");
       fflush(stdout);
       if (col != 59)
-        lseek(file, -row_size * 11, SEEK_CUR);
+        lseek(file, -row_size * 11,
+              SEEK_CUR); // going 11 rows down to start reading the next block
+                         // of pixel
     }
     fflush(stdout);
-    // sleep(1);
-    // br;
   }
   free(pixel);
 }
 
+// counts how many black pixels are in the block
 short count_BP(unsigned char *pixel) {
   short black = 0;
   for (int i = 0; i < 12; i++) {
@@ -113,12 +114,16 @@ void dump_hex_txt(bmp_bfh *header, bmp_dib *dib, bmp_bd *bd, int file) {
   write(file, header->offset_bd, 4);
 }
 
+// function that fills the bmp_bd strunct with the important information
 void fill_bd(bmp_bd *to, bmp_dib *inf, bmp_bfh *inf2) {
   to->height = inf->Ibm_height;
   to->width = inf->Ibm_width;
   to->offset = inf2->Ioffset_bd;
 }
 
+// debug function to display the file content in hex
+// little trivia: this function also displays the image in the terminal but
+// stretched :)
 void print_hex_pixel(bmp_bd *bd, int file) {
   char buf;
   lseek(file, bd->offset, SEEK_SET);
