@@ -39,6 +39,6 @@ I will probably improve it to avoid those limitations.
 
 Updates: I increased the quality of the "video" using smaller blocks, this time is used 6 x 4 pixel per blocks, now the video is 4 times bigger, having more details.
 If you want to use the old version comment the new function draw_image_HD and use draw_image instead. 
-I also tried to increase the quality even more but something is definitely going wrong, as you can see using the function draw_image_QHD that uses a block of 3x2 pixel
-the image seems more squared and the video gets slowed and gets desyncronized early, I think that the fact of drawing more than 20.000 characters for each frame is not helping.
-I want to figure out why the images are squared.
+I tried to icrease the quality considering, this time a block of 3x2 pixels, and the image is more realistic, but the syncronization seems harder to get, maybe its a 
+limitation caused by the terminal used, or can be bypassed in some way. if you want to use a function instead of another just comment/decomment the right function.
+The new function I wrote is called draw_image_QHD

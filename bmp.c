@@ -189,7 +189,7 @@ void draw_image_QHD(bmp_bd* immagine, int file) {
                 if (i != 2) lseek(file, row_size - 1, SEEK_CUR);
             }
             for (int i = 0; i < 4; i++) {
-                black = divide_pixel(pixel, col);
+                black = divide_pixel(pixel, col + i);
                 printf("\033[%d;%dH", row + 10, 4 * col + 70 + i);
                 if (black >= 11) {
                     printf("@");
