@@ -32,5 +32,13 @@ If someone is reading this and wants to use it, follow these steps:
     ./reader
 
 Limitations:
-In theory, you could use this program to display any image composed of 1 bit per pixel and with no padding (see this Wikipedia page for more information on the BMP file format).
+In theory, you could use this program to display any image composed of 1 bit per pixel and with no padding (see this Wikipedia page for more information on the BMP file format https://en.wikipedia.org/wiki/BMP_file_format).
 I will probably improve it to avoid those limitations.
+
+---
+
+Updates: I increased the quality of the "video" using smaller blocks, this time is used 6 x 4 pixel per blocks, now the video is 4 times bigger, having more details.
+If you want to use the old version comment the new function draw_image_HD and use draw_image instead. 
+I also tried to increase the quality even more but something is definitely going wrong, as you can see using the function draw_image_QHD that uses a block of 3x2 pixel
+the image seems more squared and the video gets slowed and gets desyncronized early, I think that the fact of drawing more than 20.000 characters for each frame is not helping.
+I want to figure out why the images are squared.

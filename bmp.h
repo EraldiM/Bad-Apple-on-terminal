@@ -34,14 +34,15 @@ typedef struct bmp_dib {
 
 void fill_bfh(bmp_bfh*, int);
 void fill_dib(bmp_dib*, int);
-void bmp_CR(bmp_bfh*, int);
+void bmp_CR(bmp_bfh*);
 void convertCTI(bmp_dib*);
 void fill_bd(bmp_bd*, bmp_dib*, bmp_bfh*);
 void draw_image(bmp_bd*, int);
 short draw(char**);
-void dump_hex_txt(bmp_bfh*, bmp_dib*, bmp_bd*, int);
+void dump_hex_txt(bmp_bfh*, int);
 void print_hex_pixel(bmp_bd*, int);
 void fill_bd(bmp_bd*, bmp_dib*, bmp_bfh*);
 short count_BP(unsigned char*);
 void draw_image_HD(bmp_bd*, int);
 short divide_pixel(char*, int);
+void draw_image_QHD(bmp_bd*, int);

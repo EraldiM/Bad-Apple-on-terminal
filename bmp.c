@@ -40,7 +40,7 @@ void fill_dib(bmp_dib* immagine, int file) {
 }
 
 // converting the size of the pixel offset from char little endian to decimal
-void bmp_CR(bmp_bfh* immagine, int file) {
+void bmp_CR(bmp_bfh* immagine) {
     immagine->Ioffset_bd = 0;
     for (int i = 0; i < 4; i++) {
         immagine->Ioffset_bd += (int)immagine->offset_bd[i] << (8 * i);  // bit shifting is equivalent to multiply by the power of 256, this approach will appear again
@@ -97,7 +97,7 @@ short count_BP(unsigned char* pixel) {
     return black;
 }
 
-void dump_hex_txt(bmp_bfh* header, bmp_dib* dib, bmp_bd* bd, int file) {
+void dump_hex_txt(bmp_bfh* header, int file) {
     write(file, header->header, 2);
     write(file, header->size, 4);
     write(file, header->creator, 4);
@@ -117,9 +117,8 @@ void fill_bd(bmp_bd* to, bmp_dib* inf, bmp_bfh* inf2) {
 void print_hex_pixel(bmp_bd* bd, int file) {
     char buf;
     lseek(file, bd->offset, SEEK_SET);
-    int tmp = 1;
     for (int i = 1; i < 480 * 360 / 8 + 1; i++) {
-        tmp = read(file, &buf, 1);
+        read(file, &buf, 1);
         printf("%02X", (unsigned char)buf);
         if (i % 60 == 0 && i != 0) br;
     }
@@ -173,5 +172,68 @@ short divide_pixel(char* pixel, int col) {
             black += __builtin_popcount((unsigned char)pixel[i] >> 4);
         }
     }
+    return black;
+}
+
+void draw_image_QHD(bmp_bd* immagine, int file) {
+    int black;
+    int row_size = (immagine->width + 31) / 32 * 4;
+    lseek(file, immagine->offset, SEEK_SET);
+    char* pixel = malloc(12 * sizeof(char));
+    printf("\033[2J");
+
+    for (int row = 0; row < 120; row++) {
+        for (int col = 0; col < 60; col++) {
+            for (int i = 0; i < 3; i++) {
+                read(file, &pixel[i], 1);
+                if (i != 2) lseek(file, row_size - 1, SEEK_CUR);
+            }
+            for (int i = 0; i < 4; i++) {
+                black = divide_pixel(pixel, col);
+                printf("\033[%d;%dH", row + 10, 4 * col + 70 + i);
+                if (black >= 11) {
+                    printf("@");
+                } else if (black >= 8) {
+                    printf("^");
+                } else if (black >= 6) {
+                    printf("'");
+                } else if (black >= 4) {
+                    printf(",");
+                } else if (black >= 2) {
+                    printf(".");
+                } else {
+                    printf(" ");
+                }
+            }
+            fflush(stdout);
+            if (col != 59) lseek(file, -row_size * 2, SEEK_CUR);
+        }
+    }
+}
+
+short sub_divide_pixel(char* pixel, int col) {
+    short black = 0;
+    switch (col % 4) {
+    case 0:
+        for (int i = 0; i < 3; i++)
+            black = __builtin_popcount((unsigned char)pixel[i] >> 6);
+        break;
+    case 1:
+        for (int i = 0; i < 3; i++) {
+            black = __builtin_popcount((unsigned char)(pixel[i] >> 4) % 16);
+        }
+        break;
+    case 2:
+        for (int i = 0; i < 3; i++) {
+            black = __builtin_popcount((unsigned char)(pixel[i] % 16) >> 2);
+        }
+        break;
+    case 3:
+        for (int i = 0; i < 3; i++) {
+            black = __builtin_popcount((unsigned char)(pixel[i] % 4));
+        }
+        break;
+    }
+
     return black;
 }
