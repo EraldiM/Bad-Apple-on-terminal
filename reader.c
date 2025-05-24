@@ -29,7 +29,7 @@ int main() {
         // draw_image_HD(immagine_bd, file);
         draw_image_QHD(immagine_bd, file);
         fflush(stdout);
-        usleep(16300);
+        usleep(17600);
         close(file);
     }
     free(immagine_header);

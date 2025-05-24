@@ -182,58 +182,64 @@ void draw_image_QHD(bmp_bd* immagine, int file) {
     char* pixel = malloc(12 * sizeof(char));
     printf("\033[2J");
 
-    for (int row = 0; row < 120; row++) {
+    for (int row = 0; row < 90; row++) {
         for (int col = 0; col < 60; col++) {
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 4; i++) {
                 read(file, &pixel[i], 1);
-                if (i != 2) lseek(file, row_size - 1, SEEK_CUR);
+                if (i != 3) lseek(file, row_size - 1, SEEK_CUR);
             }
             for (int i = 0; i < 4; i++) {
-                black = divide_pixel(pixel, col + i);
+                black = sub_divide_pixel(pixel, col + i);
+                // printf("black: %d\n", black);
+                // sleep(1);
                 printf("\033[%d;%dH", row + 10, 4 * col + 70 + i);
-                if (black >= 11) {
+                if (black > 8) {
+                    printf("%d", black);
+                    sleep(100);
+                }
+                if (black == 8) {
                     printf("@");
-                } else if (black >= 8) {
-                    printf("^");
                 } else if (black >= 6) {
-                    printf("'");
+                    printf("^");
                 } else if (black >= 4) {
+                    printf("'");
+                } else if (black >= 3) {
                     printf(",");
-                } else if (black >= 2) {
+                } else if (black >= 1) {
                     printf(".");
                 } else {
                     printf(" ");
                 }
             }
-            fflush(stdout);
-            if (col != 59) lseek(file, -row_size * 2, SEEK_CUR);
+            if (col != 59) lseek(file, -row_size * 3, SEEK_CUR);
         }
     }
+    free(pixel);
 }
 
 short sub_divide_pixel(char* pixel, int col) {
     short black = 0;
     switch (col % 4) {
     case 0:
-        for (int i = 0; i < 3; i++)
-            black = __builtin_popcount((unsigned char)pixel[i] >> 6);
+        for (int i = 0; i < 4; i++) {
+            black += __builtin_popcount((unsigned char)pixel[i] >> 6);
+        }
         break;
     case 1:
-        for (int i = 0; i < 3; i++) {
-            black = __builtin_popcount((unsigned char)(pixel[i] >> 4) % 16);
+        for (int i = 0; i < 4; i++) {
+            black += __builtin_popcount((unsigned char)(pixel[i] >> 4) % 4);
         }
         break;
     case 2:
-        for (int i = 0; i < 3; i++) {
-            black = __builtin_popcount((unsigned char)(pixel[i] % 16) >> 2);
+        for (int i = 0; i < 4; i++) {
+            black += __builtin_popcount((unsigned char)(pixel[i] >> 2) % 4);
         }
         break;
     case 3:
-        for (int i = 0; i < 3; i++) {
-            black = __builtin_popcount((unsigned char)(pixel[i] % 4));
+        for (int i = 0; i < 4; i++) {
+            black += __builtin_popcount((unsigned char)pixel[i] % 4);
         }
         break;
     }
-
     return black;
 }

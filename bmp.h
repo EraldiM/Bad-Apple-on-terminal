@@ -46,3 +46,4 @@ short count_BP(unsigned char*);
 void draw_image_HD(bmp_bd*, int);
 short divide_pixel(char*, int);
 void draw_image_QHD(bmp_bd*, int);
+short sub_divide_pixel(char*, int);
